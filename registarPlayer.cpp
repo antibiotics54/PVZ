@@ -82,19 +82,6 @@ string registarPlayer::obtener(string txt_user){
 }
 
 
-int main( int argc, char** argv){
-    string j;
-    registarPlayer h = registarPlayer(j);
-    
-    cout<<"ingrese nombre: ";
-    cin>>j;
-    if (h.insert(j)){
-        cout<<"Usuario added";
-    }else{
-        cout<<"ERROR";
-    }
-}
-
 
 //FUNCIONES PARA CONTRASEÑA
 //int registarPlayer::busqueda(string contra) {
