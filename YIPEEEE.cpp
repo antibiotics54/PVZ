@@ -7,11 +7,12 @@
 #include <SDL2_image/SDL_image.h>
 
 using namespace std;
-SDL_Texture* Texture, * Fondo;
-SDL_Rect space, Image,cuadro;
+SDL_Texture* Texture, * Fondo, *solContador;
+SDL_Rect space, Image,cuadro, zWalk;
+int walkWidth, txtWidth;
 
 //defini aqui arriba mis dirrectorios porque en mac es distinto
-#define zombie "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/zombie_walk.png"
+#define zombie "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/ZombieWalkingSprites1.png"
 #define sunny "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/sun.png"
 #define patio "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/Patio.png"
 #define flor "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/sunflower.png"
@@ -44,6 +45,11 @@ struct Peashooter {
 struct Pea {
 	int row;
 	int x_location;
+};
+
+struct Jugador{
+    int sol_total;
+    string name;
 };
 
 struct Zombie {
@@ -124,34 +130,36 @@ void Create_Suns(Objetos& obj) {
 
 
 void RandZombies(Objetos &obj) {
-		srand(time(NULL));
-		Zombie temp;
-		temp.x_location = 999;
-		temp.health = 10;
-		temp.moving = true;
-        temp.directory = zombie;
-		int row = 1 + (rand() % 5);
-		temp.row = row;
-		switch (row) {
-		case 1:
-			temp.y_location = 84;
-			break;
-		case 2:
-			temp.y_location = 178;
-			break;
-		case 3:
-			temp.y_location = 278;
-			break;
-		case 4:
-			temp.y_location = 381;
-			break;
-		case 5:
-			temp.y_location = 473;
-			break;
-		}
-		cout << temp.y_location<< "\n";
-		obj.zombies.push_back(temp);
-	}
+    srand(time(NULL));
+    Zombie temp;
+    temp.x_location = 999;
+    temp.health = 10;
+    temp.moving = true;
+    temp.directory = zombie;
+    int row = 1 + (rand() % 5);
+    temp.row = row;
+        switch (row) {
+            case 1:
+                temp.y_location = 84;
+                break;
+            case 2:
+                temp.y_location = 178;
+                break;
+            case 3:
+                temp.y_location = 278;
+                break;
+            case 4:
+                temp.y_location = 381;
+                break;
+            case 5:
+                temp.y_location = 473;
+                break;
+        }
+        cout << temp.y_location<< "\n";
+        obj.zombies.push_back(temp);
+    }
+    
+
 
 void move_zombies(vector<Zombie>& zombies) {
 	for (int i = 0; i < zombies.size(); i++) {
@@ -160,20 +168,21 @@ void move_zombies(vector<Zombie>& zombies) {
 	}
 }
 
-void MostrarZombies(SDL_Renderer* ren,vector<Zombie>& zombies) {
+void MostrarZombies(SDL_Renderer* ren, vector<Zombie>& zombies) {
+    
 	for (int i = 0; i < zombies.size(); i++) {
 		SDL_Surface* temp = IMG_Load(zombie);
 		Texture = SDL_CreateTextureFromSurface(ren, temp);
-		space.x = zombies[i].x_location;
-		space.y = zombies[i].y_location;
-		if (space.x > 256) {
-			SDL_RenderCopy(ren, Texture, NULL, &space);
-		}
-		else {
-			zombies.erase(zombies.begin()+i);
-		}
-		
+        space.x = zombies[i].x_location;
+        space.y = zombies[i].y_location;
+        if(space.x > 256){
+            SDL_RenderCopy(ren, Texture, &zWalk, &space);
+        }
+        else {
+            zombies.erase(zombies.begin()+i);
+        }
 	}
+    
 }
 
 void MoverSoles(vector<Sun>& sol) {
@@ -200,6 +209,50 @@ void MostrarSoles(SDL_Renderer* ren, vector<Sun>& sol) {
 	}
 }
 
+void QuitarVidas(vector<Peashooter>& peas, vector<Zombie>& zomb){
+    for (int i =0; i < zomb.size(); i++){
+        if(zomb[i].x_location == peas[i].row){
+            zomb[i].health--;
+        }
+    }
+}
+
+//void display_icons_in_icon_bar(Icons icons, Player player, window & win){
+//    if (player.sun_count < 50){
+//        win.draw_png(SUNFLOWER_ICON_DIM_DIRECTORY, ICON_BAR_X1 + 3, SUNFLOWER_ICON_Y1, ICON_WIDTH, ICON_HEIGHT);
+//        win.draw_png(PEASHOOTER_100_ICON_DIM_DIRECTORY, ICON_BAR_X1 + 3, PEASHOOTER_100_ICON_Y1, ICON_WIDTH, ICON_HEIGHT);
+//        win.draw_png(WALNUT_ICON_DIM_DIRECTORY, ICON_BAR_X1 + 3, WALNUT_ICON_Y1, ICON_WIDTH, ICON_HEIGHT);
+//    }
+//    else if (player.sun_count >= 50){
+//        win.draw_png(SUNFLOWER_ICON_BRIGHT_DIRECTORY, ICON_BAR_X1 + 3, SUNFLOWER_ICON_Y1, ICON_WIDTH, ICON_HEIGHT);
+//        win.draw_png(WALNUT_ICON_BRIGHT_DIRECTORY, ICON_BAR_X1 + 3, WALNUT_ICON_Y1, ICON_WIDTH, ICON_HEIGHT);
+//        if (player.sun_count >= 100)
+//            win.draw_png(PEASHOOTER_100_ICON_BRIGHT_DIRECTORY, ICON_BAR_X1 + 3, PEASHOOTER_100_ICON_Y1, ICON_WIDTH, ICON_HEIGHT);
+//        else
+//            win.draw_png(PEASHOOTER_100_ICON_DIM_DIRECTORY, ICON_BAR_X1 + 3, PEASHOOTER_100_ICON_Y1, ICON_WIDTH, ICON_HEIGHT);
+//    }
+//    return;
+
+/*
+ ICON_BAR_X1 20
+ICON_BAR_X2 113
+ ICON_BAR_Y1 102
+ ICON_BAR_Y2 292
+ 
+ ICON_BAR_WIDTH 95
+  ICON_BAR_HEIGHT 194
+  ICON_WIDTH 89
+  ICON_HEIGHT 60
+ 
+ win.draw_png(SUN_DIRECTORY, 5, 5, SUN_WIDTH, SUN_HEIGHT);
+     win.draw_png(SUN_COUNT_TEXT_FIELD_DIRECTORY, 85, 33, SUN_COUNT_WIDTH, SUN_COUNT_HEIGHT);
+     win.show_text(to_string(player.sun_count), 100, 33);
+ 
+ */
+//}
+
+
+
 int main(int argc, char* argv[]) {
 	SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
@@ -207,21 +260,22 @@ int main(int argc, char* argv[]) {
 	Objetos Object;
 	cuadro.h = 44;
 	cuadro.w = 44;
-	space.h = 100;
-	space.w = 50;
+	space.h = 60;
+	space.w = 60;
 	cout << Object.zombies.size()<< "\n";
 
 	SDL_Window* window = SDL_CreateWindow("YIPEEEEEE", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1035, 600, SDL_WINDOW_SHOWN);
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
-    SDL_Renderer* sprite = SDL_CreateRenderer(window, -1, 0);
+//    SDL_Renderer* sprite = SDL_CreateRenderer(window, -1, 0);
 	SDL_Surface* temple = IMG_Load(patio);
-
+    SDL_Surface *sun_icon = IMG_Load(sunny);
     
     //para chequear que pasaba con las imagenes
-    if (temple == NULL) {
+    if (temple == NULL || sun_icon == NULL) {
         cout << "Error loading image: " << SDL_GetBasePath();
         return 5;
     }
+    solContador = SDL_CreateTextureFromSurface(renderer, sun_icon);
     Fondo = SDL_CreateTextureFromSurface(renderer, temple);
     
     SDL_FreeSurface(temple);
@@ -231,18 +285,13 @@ int main(int argc, char* argv[]) {
     //=============================================================
     //VALERIA PROBANDO SPRITES
     const int moving = 60;
-    int frameTime = 0;
-    int walkWidth, walkHeight;
+    int frameTime = 0, tiempo;
     int txtWidth=0, txtHeight=0;
-    SDL_Rect zWalk;
     SDL_QueryTexture(Texture, NULL, NULL, &txtWidth, &txtHeight);
-    
-    walkWidth= txtWidth/7;
-    walkHeight = txtHeight/1;
 
     zWalk.x = zWalk.y =0;
-    zWalk.h = walkHeight;
-    zWalk.w = walkWidth;
+    zWalk.h = 49;
+    zWalk.w = 41;
     
     //===========================================================
 
@@ -257,8 +306,23 @@ int main(int argc, char* argv[]) {
 		}
         
         move_zombies(Object.zombies);
-	    MostrarZombies(renderer, Object.zombies);
+        MostrarZombies(renderer, Object.zombies);
         
+        
+        //esto crea los sprites
+        //contador para frame del sprite actual
+        frameTime++;
+        if(moving/frameTime == 2){
+            //set el contador a 0
+            frameTime =0;
+            zWalk.x += 41;
+            if(zWalk.x >= 369){
+                zWalk.x = 0;
+            }
+        }
+        
+        
+      
 		if (gus % 1200==0) {
 			Create_Suns(Object);
 		}
@@ -267,29 +331,12 @@ int main(int argc, char* argv[]) {
 		MoverSoles(Object.suns);
 		MostrarSoles(renderer, Object.suns);
         
-        //sprites de zombie
-        frameTime++;
-        
-        if(moving/frameTime == 1){
-            frameTime =0;
-            zWalk.x += walkWidth;
-            if(zWalk.x >= txtWidth){
-                zWalk.x = 0;
-            }
-        }
-        
-        //para los sprites
-        SDL_RenderClear(sprite);
-        SDL_RenderCopy(sprite, Texture, &zWalk, NULL);
-        SDL_RenderPresent(sprite);
-        
         //fondo
         SDL_RenderPresent(renderer);
         SDL_RenderClear(renderer);
         gus+=10;
         
-        
-		SDL_Delay(30);
+        SDL_Delay(30);
 		SDL_Event event;
 		SDL_PollEvent(&event);
 
