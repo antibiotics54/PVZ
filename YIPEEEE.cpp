@@ -299,6 +299,10 @@ void move_zombies(vector<Zombie>& zombies) {
     }
 }
 
+void CrearPeashooters() {
+
+}
+
 //funcion para imprimir los peashooters
 void PrintPeashooters(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> >& sc) {
     for (int gus = 0; gus < obj.peashooter.size(); gus++) {
@@ -725,8 +729,8 @@ int main(int argc, char* argv[]) {
         bool solClick;
         sumarSoles(Object, sc, x, y, solClick, player);
         if (iconSelected(icon, y,x)) {
-            cout << "click\n";
             crearPlantas(Object, icon, player, x, y,sc);
+            cout << "click\n";
         }
         
 
