@@ -72,6 +72,7 @@ struct Peashooter {
 struct Pea {
     int row;
     int x_location;
+    int col;
 };
 
 struct Jugador {
@@ -142,7 +143,7 @@ vector<vector<Block> > Create_Board() {
             temp.x2 = 250 + ((x + 1) * 81);
             temp.y1 = 70 + (y * 101);
             temp.y2 = 70 + ((y + 1) * 101);
-
+            //cout << "row: " << y << ", col: " << x << "   X1: " << temp.x1<< ", Y1:"<< temp.y1<< endl;
             temps.push_back(temp);
         }
         result.push_back(temps);
@@ -194,7 +195,7 @@ bool IsZombieInPeashooterRow(Peashooter peashooter, Zombie zomb) {
 
 //verificar si el zombie esta en la posicion de la pea
 bool IsZombieInPeaRow(Pea peas, Zombie zomb) {
-    if (zomb.y_location + 5 == peas.row) {
+    if (zomb.row == peas.row) {
         return true;
     }
     return false;
@@ -218,20 +219,23 @@ void apply_pea_hitting_zombie(Objetos& elements, int p_ind, int z_ind) {
 }
 
 //funcion para crear pea
-void crear_Pea(int col, int row, Objetos& obj) {
+void crear_Pea(int row, int col, Objetos& obj, vector<vector<Block> > sc) {
     Pea temp;
-    temp.row = col + 5;
-    temp.x_location = row + 35;
+    temp.row = row;
+    temp.col = col;
+    temp.x_location = sc[row][col].x2 ;
     obj.peas.push_back(temp);
 }
 
 //funcion para crear pea dependiendo de la posicion
-void mostrarPea(Objetos& obj, SDL_Renderer* ren) {
+void mostrarPea(Objetos& obj, SDL_Renderer* ren, vector<vector<Block> > sc) {
     for (int gus = 0; gus < obj.peas.size(); gus++) {
         SDL_Surface* temp = IMG_Load(pelota);
         Texture = SDL_CreateTextureFromSurface(ren, temp);
         guisante.x = obj.peas[gus].x_location;
-        guisante.y = obj.peas[gus].row;
+        int row = obj.peas[gus].row;
+        int col = obj.peas[gus].col;
+        guisante.y = sc[row][col].y1+20;
         SDL_RenderCopy(ren, Texture, NULL, &guisante);
     }
 }
@@ -253,7 +257,7 @@ void Create_Suns(Objetos& obj) {
     temp.final_row=rand() % 5;
     temp.final_col = rand() % 9;
     obj.suns.push_back(temp);
-    cout << "\n nuevo sol Y:" << temp.final_col << "\n";
+    std::cout << "\n nuevo sol Y:" << temp.final_col << "\n";
 }
 
 //funcion para crear zombies random
@@ -283,7 +287,7 @@ void RandZombies(Objetos& obj) {
         temp.y_location = 473;
         break;
     }
-    cout << temp.y_location << "\n";
+    std::cout << temp.y_location << "\n";
     obj.zombies.push_back(temp);
 }
 
@@ -299,24 +303,49 @@ void move_zombies(vector<Zombie>& zombies) {
     }
 }
 
-void CrearPeashooters() {
-
+void CrearPeashooters(Objetos& obj) {
+    Peashooter temp;
+    temp.col = 0;
+    temp.row = 0;
+    obj.peashooter.push_back(temp);
+    Peashooter temp2;
+    temp2.col = 0;
+    temp2.row = 1;
+    obj.peashooter.push_back(temp2);
+    Peashooter temp3;
+    temp3.col = 0;
+    temp3.row = 2;
+    obj.peashooter.push_back(temp3);
+    Peashooter temp4;
+    temp4.col = 0;
+    temp4.row = 3;
+    obj.peashooter.push_back(temp4);
+    Peashooter temp5;
+    temp5.col = 0;
+    temp5.row = 4;
+    obj.peashooter.push_back(temp5);
 }
 
 //funcion para imprimir los peashooters
-void PrintPeashooters(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> >& sc) {
-    for (int gus = 0; gus < obj.peashooter.size(); gus++) {
-        SDL_Surface* temp = IMG_Load(pea);
-        Texture = SDL_CreateTextureFromSurface(ren, temp);
-        if (temp == NULL) {
-            cout << "Error loading image: " << SDL_GetBasePath();
-            return;
-        }
-        int col = obj.peashooter[gus].col;
-        int row = obj.peashooter[gus].row;
-        Espacio.x = sc[row][col].x1+9;
-        Espacio.y = sc[row][col].y1+9;
+void PrintPeashooters(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> > sc) {
+    SDL_Surface* temp = IMG_Load(pea);
+    Texture = SDL_CreateTextureFromSurface(ren, temp);
+    if (temp == NULL) {
+        std::cout << "Error loading image: " << SDL_GetBasePath();
+        return;
+    }
+    std::cout << "size: " << obj.peashooter.size() << "\n";
+    int col, row;
+    for (int gustavo = 0; gustavo < obj.peashooter.size(); gustavo++) {
+        
+        col = obj.peashooter[gustavo].col;
+        row = obj.peashooter[gustavo].row;
+        Espacio.x = sc[row][col].x1;
+        Espacio.y = sc[row][col].y1+20;
+        std::cout << "Row: " << row << ", Col: " << col << endl;
+        std::cout << "coords peashooter:" << Espacio.x << " , " << Espacio.y << "\n";
         SDL_RenderCopy(ren, Texture, &movePea, &Espacio);
+        //std::cout << gustavo << ". Aqui?\n";
     }
 }
 
@@ -325,7 +354,7 @@ void mostrarWalnuts(SDL_Renderer* ren, Objetos& obj) {
         SDL_Surface* temp = IMG_Load(walNut);
         Texture = SDL_CreateTextureFromSurface(ren, temp);
         if (temp == NULL) {
-            cout << "Error loading image: " << SDL_GetBasePath();
+            std::cout << "Error loading image: " << SDL_GetBasePath();
             return;
         }
         pos.x = obj.walnut[gus].col;
@@ -356,9 +385,9 @@ void MostrarZombies(SDL_Renderer* ren, vector<Zombie>& zombies, vector<vector< B
             Texture = SDL_CreateTextureFromSurface(ren, temp);
         }
         */
-
+        int row = zombies[i].row;
         space.x = zombies[i].x_location;
-        space.y = zombies[i].y_location;
+        space.y = sc[row][8].y1-10;
         if (space.x > 256 && zombies[i].health > 0) {
             SDL_RenderCopy(ren, Texture, &zWalk, &space);
         }
@@ -414,7 +443,7 @@ void sumarSoles(Objetos& obj, vector<vector<Block> >& sc, int mouse_x, int mouse
             obj.suns.erase(obj.suns.begin() + i);
             sun_picked = true;
             player.sol_total += 50;
-            cout << "Cant soles: "<<player.sol_total << "\n";
+            std::cout << "Cant soles: "<<player.sol_total << "\n";
             break;
         }
     }
@@ -553,6 +582,7 @@ int main(int argc, char* argv[]) {
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
     vector<vector< Block> > sc=Create_Board();
+    //std::cout << sc.size();
     bool run = true;
     Jugador player;
     Objetos Object;
@@ -570,7 +600,7 @@ int main(int argc, char* argv[]) {
 
     SDL_Window* window = SDL_CreateWindow("YIPEEEEEE", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1050, 600, SDL_WINDOW_SHOWN);
     if (window == NULL) {
-        cout << "No carga ventana";
+        std::cout << "No carga ventana";
         return 4;
     }
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
@@ -580,7 +610,7 @@ int main(int argc, char* argv[]) {
 
     //para chequear que pasaba con las imagenes
     if (temple == NULL || sun_icon == NULL) {
-        cout << "Error loading image: " << SDL_GetBasePath();
+        std::cout << "Error loading image: " << SDL_GetBasePath();
         return 5;
     }
     solContador = SDL_CreateTextureFromSurface(renderer, sun_icon);
@@ -616,7 +646,7 @@ int main(int argc, char* argv[]) {
     //===========================================================
 
     int gus = 0;
-    
+    CrearPeashooters(Object);
     while (run) {
         SDL_RenderCopy(renderer, Fondo, NULL, NULL);
         SDL_RenderCopy(renderer, solContador, NULL, &solPos);
@@ -652,6 +682,7 @@ int main(int argc, char* argv[]) {
         move_zombies(Object.zombies);
         MostrarZombies(renderer, Object.zombies,sc);
         PrintPeashooters(renderer, Object,sc);
+        
         mostrarWalnuts(renderer, Object);
 
 
@@ -706,13 +737,14 @@ int main(int argc, char* argv[]) {
         for (int P = 0; P < Object.zombies.size(); P++) {
             for (int G = 0; G < Object.peashooter.size(); G++) {
                 if (IsZombieInPeashooterRow(Object.peashooter[G], Object.zombies[P]) && gus % 250 == 0) {
-                    crear_Pea(Object.peashooter[G].row, Object.peashooter[G].col, Object);
+                    crear_Pea(Object.peashooter[G].row, Object.peashooter[G].col, Object,sc);
+
                 }
             }
         }
-
+        
         MoverPea(Object);
-        mostrarPea(Object, renderer);
+        mostrarPea(Object, renderer,sc);
 
         for (int A = 0; A < Object.zombies.size(); A++) {
             for (int L = 0; L < Object.peas.size(); L++) {
@@ -730,7 +762,7 @@ int main(int argc, char* argv[]) {
         sumarSoles(Object, sc, x, y, solClick, player);
         if (iconSelected(icon, y,x)) {
             crearPlantas(Object, icon, player, x, y,sc);
-            cout << "click\n";
+            std::cout << "click\n";
         }
         
 
@@ -761,14 +793,14 @@ int main(int argc, char* argv[]) {
                         player.sol_total += 50;
                         Object.suns.erase(Object.suns.begin() + i);
                     }
-                    cout << "SOLES: " << player.sol_total<< "\n";
+                    std::cout << "SOLES: " << player.sol_total<< "\n";
                 }
             }
             break;
         }
     }
-    cout << "Zombie Pos x: " << gus << "\n Zombie Pos Y: " << space.y;
-    cout << "\n\n" << Object.zombies[0].directory << "\n";
-    cout << Object.peashooter.size();
+    std::cout << "Zombie Pos x: " << gus << "\n Zombie Pos Y: " << space.y;
+    std::cout << "\n\n" << Object.zombies[0].directory << "\n";
+    std::cout << Object.peashooter.size();
     return 0;
 }
