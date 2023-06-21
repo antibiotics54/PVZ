@@ -567,13 +567,13 @@ void display_icon( SDL_Renderer* renderer){
 
 //funcion para mostrar txt
 void texto(SDL_Renderer* sprite, TTF_Font* font, int &soles){
-    SDL_Color color = {0,0,0};
+    SDL_Color color = {255, 255, 255};
     string texto = to_string(soles);
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, texto.c_str(), color);
     SDL_Texture* muestra = SDL_CreateTextureFromSurface(sprite, textSurface);
     SDL_Rect textRect;
-    textRect.x = 5;
-    textRect.y = 5;
+    textRect.x = 100;
+    textRect.y = 35;
     SDL_QueryTexture(muestra, nullptr, nullptr, &textRect.w, &textRect.h);
     SDL_RenderCopy(sprite, muestra, nullptr, &textRect);
     SDL_FreeSurface(textSurface);
@@ -619,7 +619,7 @@ int main(int argc, char* argv[]) {
     SDL_Surface *mostrar = IMG_Load(field);
 
     //para chequear que pasaba con las imagenes
-    if (temple == NULL || sun_icon == NULL || mostrar==NULL ) {
+    if (temple == NULL && sun_icon == NULL && mostrar==NULL ) {
         cout << "Error loading image: " << SDL_GetBasePath();
         return 5;
     }
@@ -652,9 +652,10 @@ int main(int argc, char* argv[]) {
     zWalk.w = 41;
     solPos.x = solPos.y = 5;
     solPos.h = solPos.w = 100;
-    txtPos.x = txtPos.y = 15;
+    txtPos.x = 95;
+    txtPos.y = 35;
     txtPos.w =60;
-    txtPos.h = 45;
+    txtPos.h = 40;
     player.sol_total=50;
     //===========================================================
 
@@ -665,7 +666,6 @@ int main(int argc, char* argv[]) {
         SDL_RenderCopy(renderer, solContador, NULL, &solPos);
         SDL_RenderCopy(renderer, mostrarSol, NULL, &txtPos);
         display_icon(renderer);
-        SDL_RenderClear(renderer);
 
         //verificacion de como aparecen los icons
         if(player.sol_total < 50){
@@ -702,7 +702,7 @@ int main(int argc, char* argv[]) {
 
         move_zombies(Object.zombies);
         MostrarZombies(renderer, Object.zombies,sc);
-       // PrintPeashooters(renderer, Object,sc);
+     //  PrintPeashooters(renderer, Object,sc);
 
        // mostrarWalnuts(renderer, Object);
 
