@@ -10,7 +10,7 @@
 
 using namespace std;
 
-SDL_Texture* Texture, * Fondo, *inicio, *solContador, *dimP, *dimS, *dimW, *PeaIcon, *WalIcon, *SunIcon, *Txt, *mostrarSol, *experience, *ganado;
+SDL_Texture* Texture, * Fondo, *inicio, *solContador, *dimP, *dimS, *dimW, *PeaIcon, *WalIcon, *SunIcon, *Txt, *mostrarSol, *experience, *ganado, *perder;
 SDL_Rect space, Image,cuadro, zWalk, guisante, Espacio, movePea, dibujoPea, dibujoSun, dibujoWalnut, danger, moveWalnut, moveSunflower, pos, solPos, txtPos, xpPos;
 int walkWidth, txtWidth;
 bool cambio1=false, cambio2=false, cambio3 =false;
@@ -35,6 +35,7 @@ bool cambio1=false, cambio2=false, cambio3 =false;
 #define field "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/text_field.png"
 #define total "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/xp.png"
 #define mensaje "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/ganar.png"
+#define mensaje2 "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/loser.png"
 
 //defini aqui arriba mis dirrectorios porque en mac es distinto
 
@@ -406,7 +407,7 @@ void apply_zombie_byte_on_walnut(Objetos& obj, int z_ind, int w_ind, vector<vect
         if (obj.walnut[w_ind].vida < 0) {
             obj.zombies[z_ind].moving = true;
             obj.walnut.erase(obj.walnut.begin() + w_ind);
-            xp-=10;
+            xp-=20;
         }
     }
 }
@@ -677,13 +678,6 @@ void crearPlantas(Objetos& obj, Icon& icon, int& sol_total, int& x, int& y, vect
     }
 }
 
-bool ganar(Objetos& obj, int &xp){
-    if(xp ==35){
-        return true;
-    }
-    return false;
-}
-
 //funcion para display los icons de las plantas
 void display_icon( SDL_Renderer* renderer){
     //crear las imagenes de los icons
@@ -773,9 +767,9 @@ int main(int argc, char* argv[]) {
     guisante.w = 20;
     guisante.h = 20;
     cout << Object.zombies.size()<< "\n";
-
+    
     SDL_Window* window = SDL_CreateWindow("YIPEEEE", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1200, 600, SDL_WINDOW_SHOWN);
-
+    
     if(window==NULL){
         cout<<"No carga ventana";
         return 4;
@@ -786,9 +780,10 @@ int main(int argc, char* argv[]) {
     SDL_Surface *mostrar = IMG_Load(field);
     SDL_Surface *men = IMG_Load(mensaje);
     SDL_Surface *exp = IMG_Load(total);
-
+    SDL_Surface *perdio = IMG_Load(mensaje2);
+    
     //para chequear que pasaba con las imagenes
-    if (temple == NULL || sun_icon == NULL || mostrar==NULL || exp==NULL||men==NULL ) {
+    if (temple == NULL || sun_icon == NULL || mostrar==NULL || exp==NULL||men==NULL ||perdio==NULL) {
         cout << "Error loading image: " << SDL_GetBasePath();
         return 5;
     }
@@ -797,14 +792,17 @@ int main(int argc, char* argv[]) {
     ganado = SDL_CreateTextureFromSurface(renderer, men);
     mostrarSol = SDL_CreateTextureFromSurface(renderer, mostrar);
     experience = SDL_CreateTextureFromSurface(renderer, exp);
-
+    perder = SDL_CreateTextureFromSurface(renderer, perdio);
+    
     SDL_FreeSurface(temple);
     SDL_FreeSurface(sun_icon);
     SDL_FreeSurface(mostrar);
     SDL_FreeSurface(exp);
+    SDL_FreeSurface(men);
+    SDL_FreeSurface(perdio);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
-
+    
     //=============================================================
     //VALERIA PROBANDO SPRITES
     const int moving = 60;
@@ -812,7 +810,7 @@ int main(int argc, char* argv[]) {
     int timeZombie=0, timeWalnut =0, timePea =0, timeSunflower=0;
     int txtWidth=0, txtHeight=0;
     SDL_QueryTexture(Texture, NULL, NULL, &txtWidth, &txtHeight);
-
+    
     zWalk.x = zWalk.y =0;
     movePea.x = movePea.y = 0;
     moveWalnut.x = moveWalnut.y = 0;
@@ -837,17 +835,16 @@ int main(int argc, char* argv[]) {
     //===========================================================
     
     int gus = 0;
-    while(!quit){
-        
+    while (run) {
         //crearPeashooters(Object);
-        if(ganar(Object, player.xp)){
-            run = true;
+        if(player.xp>=1600){//ganado
             SDL_RenderCopy(renderer, ganado, NULL, NULL);
-        }else{
-            run = false;
-        }
-        
-        while (run) {
+            SDL_RenderPresent(renderer);
+        }else if(player.xp<=-100){//perdedor
+            SDL_RenderCopy(renderer, perder, NULL, NULL);
+            SDL_RenderPresent(renderer);
+        }else{//correr programa normalmente
+            run = true;
             
             //==========================AQUI LO CAMBIAS ==========================
             TTF_Font* font = TTF_OpenFont("/Users/valeriaalfaro/Library/Fonts/35021733747.ttf", 33);
@@ -867,6 +864,7 @@ int main(int argc, char* argv[]) {
             switch (event.type) {
                 case SDL_QUIT:
                     quit = false;
+                    run = false;
                     IMG_Quit();
                     break;
                 case SDL_MOUSEBUTTONDOWN:
@@ -1041,7 +1039,8 @@ int main(int argc, char* argv[]) {
         cout << "\n\n"<< Object.zombies.size() << "\n";
         cout << Object.suns.size();
         
-    }
+        }
+    
     SDL_DestroyWindow(window);
     SDL_RenderClear(renderer);
     IMG_Quit();
