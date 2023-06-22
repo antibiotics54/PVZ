@@ -1,44 +1,46 @@
+
 #include <iostream>
 #include <cstdlib>
+#include <SDL2/SDL.h>
+#include <SDL2_image/SDL_image.h>
+#include <SDL2_ttf/SDL_ttf.h>
 #include <ctime>
 #include <vector>
-#include <string>
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-
-
+#include "Mouse.h"
 
 using namespace std;
 
-SDL_Texture* Texture, * Fondo, * inicio, * solContador, * dimP, * dimS, * dimW, * PeaIcon, * WalIcon, * SunIcon, * Txt, * mostrarSol;
-SDL_Rect space, Image, cuadro, zWalk, guisante, Espacio, movePea, dibujoPea, dibujoSun, dibujoWalnut, danger, moveWalnut, moveSunflower, pos, solPos, txtPos;
+SDL_Texture* Texture, * Fondo, *inicio, *solContador, *dimP, *dimS, *dimW, *PeaIcon, *WalIcon, *SunIcon, *Txt, *mostrarSol, *experience, *ganado;
+SDL_Rect space, Image,cuadro, zWalk, guisante, Espacio, movePea, dibujoPea, dibujoSun, dibujoWalnut, danger, moveWalnut, moveSunflower, pos, solPos, txtPos, xpPos;
 int walkWidth, txtWidth;
-bool cambio1 = false, cambio2 = false, cambio3 = false;
+bool cambio1=false, cambio2=false, cambio3 =false;
 
-#define zombie "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\ZombieWalkingSprites1.png"
-#define pelota "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\pea.png"
-#define sunny "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\sun.png"
-#define patio "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\Patio.png"
-#define flor "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\sunflower.png"
-#define pea "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\peashooters_copy.png"
-#define iconP "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\icon_peashooter_100.png"
-#define dimIconP "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\icon_peashooter_100_dim.png"
-#define iconS "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\icon_sunflower.png"
-#define dimIconS "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\icon_sunflower_dim.png"
-#define iconW "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\icon_walnut.png"
-#define dimIconW "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\icon_walnut_dim.png"
-#define pegar "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\impacto.png"
-#define walNut "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\roca_copy.png"
-#define login "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\fondo_login.png"
-#define danger1 "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\danger1.png"
-#define comiendo "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\comiendo.png"
-#define field "\\Users\\lenovo\\source\\repos\\SDL_Projects\\foticos\\text_field.png"
+#define zombie "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/ZombieWalkingSprites.png"
+#define pelota "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/pea.png"
+#define sunny "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/sun.png"
+#define patio "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/Patio.png"
+#define flor "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/sunFlower.png"
+#define pea "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/peashooters_copy.png"
+#define iconP "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/icon_peashooter_100.png"
+#define dimIconP "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/icon_peashooter_100_dim.png"
+#define iconS "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/icon_sunflower.png"
+#define dimIconS "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/icon_sunflower_dim.png"
+#define iconW "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/icon_walnut.png"
+#define dimIconW "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/icon_walnut_dim.png"
+#define pegar "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/impacto.png"
+#define walNut "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/roca1.png"
+#define login "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/fondo_login.png"
+#define danger1 "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/danger2.png"
+#define comiendo "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/comiendo1.png"
+#define field "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/text_field.png"
+#define total "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/xp.png"
+#define mensaje "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/ganar.png"
 
 //defini aqui arriba mis dirrectorios porque en mac es distinto
 
+
 //structs que son como clases
-enum Button {
+enum Button{
     ICON_CHOOSE,
     FRONTYARD,
     CREAR,
@@ -46,8 +48,8 @@ enum Button {
 
 struct Icon {
     bool is_sunflower_chosen=false;
-    bool is_peashooter_chosen=false;
-    bool is_walnut_chosen=false;
+        bool is_peashooter_chosen=false;
+        bool is_walnut_chosen=false;
 };
 struct Block {
     int x1, x2;
@@ -84,9 +86,8 @@ struct Pea {
 };
 
 struct Jugador {
-    int sol_total;
+    int sol_total, xp;
     string name;
-    bool firstclick;
     bool mouse;
 };
 
@@ -111,7 +112,31 @@ struct Objetos {
 
 vector<vector<Block> > Screen;
 
-
+////este void crea los peashooters en posicion definida (prototipo)
+//void crearPeashooters(Objetos &obj) {
+//    Peashooter temp;
+//    temp.col = 270;
+//    temp.row = 84;
+//    obj.peashooter.push_back(temp);
+//    Peashooter temp1;
+//    temp1.col = 270;
+//    temp1.row = 178;
+//    obj.peashooter.push_back(temp1);
+//    Peashooter temp2;
+//    temp2.col = 270;
+//    temp2.row = 278;
+//    obj.peashooter.push_back(temp2);
+//    Peashooter temp3;
+//    temp3.col = 270;
+//    temp3.row = 381;
+//    obj.peashooter.push_back(temp3);
+//    Peashooter temp4;
+//    temp4.col = 270;
+//    temp4.row = 473;
+//    obj.peashooter.push_back(temp4);
+//    std::cout << "Creado";
+//
+//}
 
 /*
 void crearWalnuts(Objetos &obj) {
@@ -159,6 +184,7 @@ vector<vector<Block> > Create_Board() {
     }
     return result;
 }
+
 
 //verificacion si se puede mover el zombie
 bool ZombiePuedeMoverse(Zombie zomb, int row, int col, vector<vector<Block> >& map) {
@@ -218,12 +244,13 @@ bool PeaGolpeadoZombie(Pea peas, Zombie zomb) {
 }
 
 //
-void apply_pea_hitting_zombie(Objetos& elements, int p_ind, int z_ind) {
+void apply_pea_hitting_zombie(Objetos& elements, int p_ind, int z_ind, int &xp) {
     if (PeaGolpeadoZombie(elements.peas[p_ind], elements.zombies[z_ind])) {
         elements.zombies[z_ind].health--;
         elements.peas.erase(elements.peas.begin() + p_ind);
         if (elements.zombies[z_ind].health == 0)
             elements.zombies.erase(elements.zombies.begin() + z_ind);
+        xp+=10;
     }
 }
 
@@ -232,7 +259,7 @@ void crear_Pea(int row, int col, Objetos& obj, vector<vector<Block> > sc) {
     Pea temp;
     temp.row = row;
     temp.col = col;
-    temp.x_location = sc[row][col].x2;
+    temp.x_location = sc[row][col].x2 ;
     obj.peas.push_back(temp);
 }
 
@@ -244,7 +271,7 @@ void mostrarPea(Objetos& obj, SDL_Renderer* ren, vector<vector<Block> > sc) {
         guisante.x = obj.peas[gus].x_location;
         int row = obj.peas[gus].row;
         int col = obj.peas[gus].col;
-        guisante.y = sc[row][col].y1 + 20;
+        guisante.y = sc[row][col].y1+20;
         SDL_RenderCopy(ren, Texture, NULL, &guisante);
     }
 }
@@ -263,7 +290,7 @@ void Create_Suns(Objetos& obj) {
     Sun temp;
     temp.MoveOnY = 5;
     temp.wait_seconds = 30;
-    temp.final_row = rand() % 5;
+    temp.final_row=rand() % 5;
     temp.final_col = rand() % 9;
     obj.suns.push_back(temp);
     std::cout << "\n nuevo sol Y:" << temp.final_col << "\n";
@@ -302,7 +329,7 @@ void RandZombies(Objetos& obj) {
 
 
 //funcion para mover el zombie desde derecha a izquierda
-void move_zombies(vector<Zombie>& zombies) {
+void move_zombies(vector<Zombie>& zombies, int &xp) {
     for (int i = 0; i < zombies.size(); i++) {
         if (zombies[i].moving) {
             zombies[i].x_location -= 2;
@@ -326,33 +353,6 @@ bool has_zombie_reached_element(Zombie zom, int row, int col, vector<vector<Bloc
 }
 
 
-void CrearPeashooters(Objetos& obj) {
-    Peashooter temp;
-    temp.col = 7;
-    temp.row = 0;
-    temp.vida = 30;
-    obj.peashooter.push_back(temp);
-    Peashooter temp2;
-    temp2.col = 7;
-    temp2.row = 1;
-    temp2.vida = 30;
-    obj.peashooter.push_back(temp2);
-    Peashooter temp3;
-    temp3.col = 7;
-    temp3.row = 2;
-    temp3.vida = 30;
-    obj.peashooter.push_back(temp3);
-    Peashooter temp4;
-    temp4.col = 7;
-    temp4.row = 3;
-    temp4.vida = 30;
-    obj.peashooter.push_back(temp4);
-    Peashooter temp5;
-    temp5.col = 7;
-    temp5.row = 4;
-    temp5.vida = 30;
-    obj.peashooter.push_back(temp5);
-}
 
 //funcion para imprimir los peashooters
 void PrintPeashooters(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> > sc) {
@@ -365,13 +365,12 @@ void PrintPeashooters(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> > sc
     //cout << "size: " << obj.peashooter.size() << "\n";
     int col, row;
     for (int gustavo = 0; gustavo < obj.peashooter.size(); gustavo++) {
-        //cout << "Peashooter No. " << gustavo<< endl;
-        //cout << "Row: " << obj.peashooter[gustavo].row << ", Col: " << obj.peashooter[gustavo].col << endl;
-        cout << "Vida Peashooter No." << gustavo <<" : " << obj.peashooter[gustavo].vida << endl;
+     //   cout << "Peashooter No. " << gustavo<< endl;
+     //   cout << "Row: " << obj.peashooter[gustavo].row << ", Col: " << obj.peashooter[gustavo].col << endl;
         col = obj.peashooter[gustavo].col;
         row = obj.peashooter[gustavo].row;
-        Espacio.x = sc[row][col].x1+30;
-        Espacio.y = sc[row][col].y1 + 20;
+        Espacio.x = sc[row][col].x1 +50;
+        Espacio.y = sc[row][col].y1 +20;
     
         //cout << "coords peashooter:" << Espacio.x << " , " << Espacio.y << "\n";
         //std::cout << gustavo << ". Aqui?\n";
@@ -380,108 +379,72 @@ void PrintPeashooters(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> > sc
     }
 }
 
-void apply_zombie_byte_on_peashooter(Objetos& obj, int z_ind, int p_ind, vector<vector<Block> > sc) {
+
+
+void apply_zombie_byte_on_peashooter(Objetos& obj, int z_ind, int p_ind, vector<vector<Block> > sc, int &xp) {
     if (has_zombie_reached_element(obj.zombies[z_ind], obj.peashooter[p_ind].row, obj.peashooter[p_ind].col, sc)) {
         obj.zombies[z_ind].moving = false;
         obj.peashooter[p_ind].vida--;
-        if (obj.peashooter[p_ind].vida == 0 ) {
-            //cout << "?" << endl;
+        if (obj.peashooter[p_ind].vida < 0 ) {
             obj.zombies[z_ind].moving = true;
             obj.peashooter.erase(obj.peashooter.begin() + p_ind);
+            xp-=10;
         }
     }
 }
 
-void handle_zombie_peashooter_encounter(Objetos& obj, vector<vector<Block> > sc) {
+void handle_zombie_peashooter_encounter(Objetos& obj, vector<vector<Block> > sc, int &xp) {
     for (int i = 0; i < obj.peashooter.size(); i++)
         for (int j = 0; j < obj.zombies.size(); j++)
-            apply_zombie_byte_on_peashooter(obj, j, i, sc);
+            apply_zombie_byte_on_peashooter(obj, j, i, sc, xp);
 }
 
-//funcion para mostrar walnuts
-void mostrarWalnuts(SDL_Renderer* ren, Objetos& obj) {
-    for (int gus = 0; gus < obj.walnut.size(); gus++) {
-        SDL_Surface* temp = IMG_Load(walNut);
-        Texture = SDL_CreateTextureFromSurface(ren, temp);
-        if (temp == NULL) {
-            std::cout << "Error loading image: " << SDL_GetBasePath();
-            return;
-        }
-        pos.x = obj.walnut[gus].col;
-        pos.y = obj.walnut[gus].row;
-        SDL_RenderCopy(ren, Texture, &moveWalnut, &pos);
-    }
-}
-
-//funcion para imprimir los zombies
-//funcion para imprimir los zombies
-void MostrarZombies(SDL_Renderer* ren, vector<Zombie>& zombies, Objetos& obj, vector<vector< Block> >& sc) {
-    Zombie z;
-
-    for (int i = 0; i < zombies.size(); i++) {
-        int row = zombies[i].row;
-        int col = zombies[i].y_location;
-        //cambiar sprites dependiendo de la health
-        if (zombies[i].health == 10) {
-            SDL_Surface* temp = IMG_Load(zombie);
-            Texture = SDL_CreateTextureFromSurface(ren, temp);
-            zWalk.h = 49;
-            zWalk.w = 41;
-            cambio1 = true;
-            cambio2 = false;
-            cambio3 = false;
-        }
-        else if (zombies[i].health < 5) {
-            SDL_Surface* temp = IMG_Load(zombie);
-            Texture = SDL_CreateTextureFromSurface(ren, temp);
-            zWalk.w = 25;
-            zWalk.h = 46;
-            cambio1 = false;
-            cambio2 = true;
-            cambio3 = false;
-        }
-        else if (!ZombieChocadoConPlantas(obj, z, sc)) {
-            SDL_Surface* temp = IMG_Load(comiendo);
-            zWalk.w = 29;
-            zWalk.h = 45;
-            cambio1 = false;
-            cambio2 = false;
-            cambio3 = true;
-            Texture = SDL_CreateTextureFromSurface(ren, temp);
-        }
-
-        space.x = zombies[i].x_location;
-        space.y = sc[row][8].y1 - 10;
-        if (space.x > 256 && zombies[i].health > 0) {
-            SDL_RenderCopy(ren, Texture, &zWalk, &space);
-        }
-        else {
-            zombies.erase(zombies.begin() + i);
+void apply_zombie_byte_on_walnut(Objetos& obj, int z_ind, int w_ind, vector<vector<Block> > sc, int &xp) {
+    if (has_zombie_reached_element(obj.zombies[z_ind], obj.walnut[w_ind].row, obj.walnut[w_ind].col, sc)) {
+        obj.zombies[z_ind].moving = false;
+        obj.walnut[w_ind].vida--;
+        if (obj.walnut[w_ind].vida < 0) {
+            obj.zombies[z_ind].moving = true;
+            obj.walnut.erase(obj.walnut.begin() + w_ind);
+            xp-=10;
         }
     }
 }
 
+void handle_zombie_walnut_encounter(Objetos& obj, vector<vector<Block> > sc, int &xp) {
+    for (int i = 0; i < obj.walnut.size(); i++)
+        for (int j = 0; j < obj.zombies.size(); j++)
+            apply_zombie_byte_on_walnut(obj, j, i, sc, xp);
+}
 
-//funcion para que los soles cambien de posicion randomly
-void MoverSoles(vector<Sun>& sol, vector<vector<Block> > sc) {
-    for (int i = 0; i < sol.size(); i++) {
-        int row = sol[i].final_row;
-        int col = sol[i].final_col;
-        int limite = sc[row][col].y1 + 30;
-        if (sol[i].MoveOnY <= limite) {
-            sol[i].MoveOnY += 5;
-        }
-        else if (sol[i].wait_seconds > 0) {
-            sol[i].wait_seconds--;
-        }
-        else {
-            sol.erase(sol.begin() + i);
-        }
 
+//funcion para imprimir los walnuts
+void PrintWalnuts(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> > sc) {
+    SDL_Surface* temp = IMG_Load(walNut);
+    Texture = SDL_CreateTextureFromSurface(ren, temp);
+    if (temp == NULL) {
+        cout << "Error loading image: " << SDL_GetBasePath();
+        return;
+    }
+    //cout << "size: " << obj.peashooter.size() << "\n";
+    int col, row;
+    for (int gustavo = 0; gustavo < obj.walnut.size(); gustavo++) {
+     //   cout << "Peashooter No. " << gustavo<< endl;
+     //   cout << "Row: " << obj.peashooter[gustavo].row << ", Col: " << obj.peashooter[gustavo].col << endl;
+        col = obj.walnut[gustavo].col;
+        row = obj.walnut[gustavo].row;
+        Espacio.x = sc[row][col].x1 +50;
+        Espacio.y = sc[row][col].y1 +20;
+    
+        //cout << "coords peashooter:" << Espacio.x << " , " << Espacio.y << "\n";
+        //std::cout << gustavo << ". Aqui?\n";
+        SDL_RenderCopy(ren, Texture, &moveWalnut, &Espacio);
+        
     }
 }
 
-//funcion para imprimir los peashooters
+
+//funcion para imprimir los sunflowers
 void PrintSunflowers(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> > sc) {
     SDL_Surface* temp = IMG_Load(flor);
     Texture = SDL_CreateTextureFromSurface(ren, temp);
@@ -492,17 +455,65 @@ void PrintSunflowers(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> > sc)
     //cout << "size: " << obj.peashooter.size() << "\n";
     int col, row;
     for (int gustavo = 0; gustavo < obj.sunflower.size(); gustavo++) {
-        //   cout << "Peashooter No. " << gustavo<< endl;
-        //   cout << "Row: " << obj.peashooter[gustavo].row << ", Col: " << obj.peashooter[gustavo].col << endl;
+     //   cout << "Peashooter No. " << gustavo<< endl;
+     //   cout << "Row: " << obj.peashooter[gustavo].row << ", Col: " << obj.peashooter[gustavo].col << endl;
         col = obj.sunflower[gustavo].col;
         row = obj.sunflower[gustavo].row;
-        Espacio.x = sc[row][col].x1 + 50;
-        Espacio.y = sc[row][col].y1 + 20;
-
+        Espacio.x = sc[row][col].x1 +50;
+        Espacio.y = sc[row][col].y1 +20;
+    
         //cout << "coords peashooter:" << Espacio.x << " , " << Espacio.y << "\n";
         //std::cout << gustavo << ". Aqui?\n";
         SDL_RenderCopy(ren, Texture, &moveSunflower, &Espacio);
+        
+    }
+}
 
+
+//funcion para imprimir los zombies
+void MostrarZombies(SDL_Renderer* ren, vector<Zombie>& zombies, Objetos& obj, vector<vector< Block> >& sc, int &xp) {
+    Zombie z;
+
+    for (int i = 0; i < zombies.size(); i++) {
+        int row = zombies[i].row;
+        int col = zombies[i].y_location;
+        //cambiar sprites dependiendo de la health
+        if (zombies[i].health==10 && !ZombieChocadoConPlantas(obj, z, sc)) {
+            SDL_Surface* temp = IMG_Load(zombie);
+            Texture = SDL_CreateTextureFromSurface(ren, temp);
+            zWalk.h = 49;
+            zWalk.w = 41;
+            cambio1=true;
+            cambio2=false;
+            cambio3=false;
+        }else if(zombies[i].health<5){
+            SDL_Surface* temp = IMG_Load(danger1);
+            Texture = SDL_CreateTextureFromSurface(ren, temp);
+            zWalk.w=25;
+            zWalk.h = 46;
+            cambio1=false;
+            cambio2=true;
+            cambio3=false;
+        }else if(ZombieChocadoConPlantas(obj, z, sc)){
+            zombies[i].moving=false;
+            SDL_Surface* temp = IMG_Load(comiendo);
+            zWalk.w=29;
+            zWalk.h = 45;
+            cambio1=false;
+            cambio2=false;
+            cambio3=true;
+            Texture = SDL_CreateTextureFromSurface(ren, temp);
+        }
+      
+        space.x = zombies[i].x_location;
+        space.y = sc[row][8].y1-10;
+        if (space.x > 256 && zombies[i].health > 0) {
+            SDL_RenderCopy(ren, Texture, &zWalk, &space);
+        }
+        else {
+            zombies.erase(zombies.begin() + i);
+            xp+=10;
+        }
     }
 }
 
@@ -523,48 +534,23 @@ void handle_zombie_sunflower_encounter(Objetos& obj, vector<vector<Block> > sc) 
             apply_zombie_byte_on_sunflower(obj, j, i, sc);
 }
 
-
-
-//funcion para imprimir los walnuts
-void PrintWalnuts(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> > sc) {
-    SDL_Surface* temp = IMG_Load(walNut);
-    Texture = SDL_CreateTextureFromSurface(ren, temp);
-    if (temp == NULL) {
-        cout << "Error loading image: " << SDL_GetBasePath();
-        return;
-    }
-    //cout << "size: " << obj.peashooter.size() << "\n";
-    int col, row;
-    for (int gustavo = 0; gustavo < obj.walnut.size(); gustavo++) {
-        //   cout << "Peashooter No. " << gustavo<< endl;
-        //   cout << "Row: " << obj.peashooter[gustavo].row << ", Col: " << obj.peashooter[gustavo].col << endl;
-        col = obj.walnut[gustavo].col;
-        row = obj.walnut[gustavo].row;
-        Espacio.x = sc[row][col].x1 + 50;
-        Espacio.y = sc[row][col].y1 + 20;
-
-        //cout << "coords peashooter:" << Espacio.x << " , " << Espacio.y << "\n";
-        //std::cout << gustavo << ". Aqui?\n";
-        SDL_RenderCopy(ren, Texture, &moveWalnut, &Espacio);
-
-    }
-}
-
-void apply_zombie_byte_on_walnut(Objetos& obj, int z_ind, int w_ind, vector<vector<Block> > sc) {
-    if (has_zombie_reached_element(obj.zombies[z_ind], obj.walnut[w_ind].row, obj.walnut[w_ind].col, sc)) {
-        obj.zombies[z_ind].moving = false;
-        obj.walnut[w_ind].vida--;
-        if (obj.walnut[w_ind].vida < 0) {
-            obj.zombies[z_ind].moving = true;
-            obj.walnut.erase(obj.walnut.begin() + w_ind);
+//funcion para que los soles cambien de posicion randomly
+void MoverSoles(vector<Sun>& sol, vector<vector<Block> > sc) {
+    for (int i = 0; i < sol.size(); i++) {
+        int row = sol[i].final_row;
+        int col = sol[i].final_col;
+        int limite = sc[row][col].y1+30;
+        if (sol[i].MoveOnY<= limite) {
+            sol[i].MoveOnY += 5;
         }
-    }
-}
+        else if (sol[i].wait_seconds>0) {
+            sol[i].wait_seconds--;
+        }
+        else {
+            sol.erase(sol.begin() + i);
+        }
 
-void handle_zombie_walnut_encounter(Objetos& obj, vector<vector<Block> > sc) {
-    for (int i = 0; i < obj.walnut.size(); i++)
-        for (int j = 0; j < obj.zombies.size(); j++)
-            apply_zombie_byte_on_walnut(obj, j, i, sc);
+    }
 }
 
 //funcion para imprimir soles
@@ -592,7 +578,7 @@ void sumarSoles(Objetos& obj, vector<vector<Block> >& sc, int mouse_x, int mouse
             obj.suns.erase(obj.suns.begin() + i);
             sun_picked = true;
             player.sol_total += 50;
-            std::cout << "Cant soles: " << player.sol_total << "\n";
+            std::cout << "Cant soles: "<<player.sol_total << "\n";
             break;
         }
     }
@@ -607,30 +593,33 @@ void gen_random_sun_from_sunflower(Objetos& obj, Sunflower sunflower, vector<vec
     obj.suns.push_back(temp);
 }
 
+
 //funcion para quitarle vida a los zombies
-void QuitarVidas(vector<Peashooter>& peas, vector<Zombie>& zomb) {
-    for (int i = 0; i < zomb.size(); i++) {
-        if (zomb[i].x_location == peas[i].row) {
+void QuitarVidas(vector<Peashooter>& peas, vector<Zombie>& zomb){
+    for (int i =0; i < zomb.size(); i++){
+        if(zomb[i].x_location == peas[i].row){
             zomb[i].health--;
         }
     }
 }
 
+
 //boolean para saber que icon fue seleccionado
 void iconSelected(Icon& icon, int x, int y) {
     if ((y > 106) && (y < 195) && (x > 50) && (x < 110)) {
-        icon.is_sunflower_chosen = true;
-        cout << "SUNFLOWER SELECTED";
-    }
-    else if ((y > 234) && (y < 323) && (x > 50) && (x < 110)) {
-        icon.is_walnut_chosen = true;
-        cout << "WALNUT SELECTED";
-    }
-    else if ((y > 170) && (y < 259) && (x > 50) && (x < 110)) {
-        icon.is_peashooter_chosen = true;
-        cout << "PEASHOOTER SELECTED";
-    }
+       icon.is_sunflower_chosen = true;
+       cout << "SUNFLOWER SELECTED";
+   }
+   else if ((y > 234) && (y < 323) && (x > 50) && (x < 110)) {
+       icon.is_walnut_chosen = true;
+       cout << "WALNUT SELECTED";
+   }
+   else if ((y > 170) && (y < 259) && (x > 50) && (x < 110)) {
+       icon.is_peashooter_chosen = true;
+       cout << "PEASHOOTER SELECTED";
+   }
 }
+
 
 bool click_is_in_frontyard(vector<vector< Block> >& sc, int mouse_x, int mouse_y) {
     int right_bound = sc[0][8].x2;
@@ -661,18 +650,18 @@ void crearPlantas(Objetos& obj, Icon& icon, int& sol_total, int& x, int& y, vect
         Peashooter ptemp;
         ptemp.row = row;
         ptemp.col = col;
-        ptemp.vida = 10;
+        ptemp.vida = 100;
         obj.peashooter.push_back(ptemp);
         sol_total -= 100;
         icon.is_peashooter_chosen = false;
         cout << "Peashooter creado";
-    }
-    else if ((icon.is_sunflower_chosen) && (sol_total >= 50)) {
+    }else if ((icon.is_sunflower_chosen) && (sol_total >= 50)) {
         Sunflower stemp;
         stemp.row = row;
         stemp.col = col;
-        stemp.vida = 10;
+        stemp.vida = 100;
         obj.sunflower.push_back(stemp);
+        icon.is_sunflower_chosen = false;
         sol_total -= 50;
         cout << "Sunflower creada";
     }
@@ -680,23 +669,23 @@ void crearPlantas(Objetos& obj, Icon& icon, int& sol_total, int& x, int& y, vect
         Walnut wtemp;
         wtemp.row = row;
         wtemp.col = col;
-        wtemp.vida = 30;
+        wtemp.vida =300;
         obj.walnut.push_back(wtemp);
         sol_total -= 50;
+        icon.is_walnut_chosen= false;
         cout << "Walnt creada";
     }
 }
 
-bool ganar(Objetos& obj) {
-    if (obj.zombies.size() == 0) {
+bool ganar(Objetos& obj, int &xp){
+    if(xp ==35){
         return true;
     }
     return false;
 }
 
-
 //funcion para display los icons de las plantas
-void display_icon(SDL_Renderer* renderer) {
+void display_icon( SDL_Renderer* renderer){
     //crear las imagenes de los icons
     SDL_Surface* pDim = IMG_Load(dimIconP);
     SDL_Surface* p = IMG_Load(iconP);
@@ -709,8 +698,8 @@ void display_icon(SDL_Renderer* renderer) {
     dimS = SDL_CreateTextureFromSurface(renderer, sDim);
     SunIcon = SDL_CreateTextureFromSurface(renderer, s);
     dimW = SDL_CreateTextureFromSurface(renderer, wDim);
-    WalIcon = SDL_CreateTextureFromSurface(renderer, w);
-    int width = 89, height = 60, iconX = 50, peaY = 167, walnutY = 231, sunY = 103;
+    WalIcon =SDL_CreateTextureFromSurface(renderer, w);
+    int width =89, height = 60, iconX = 50, peaY = 167, walnutY = 231, sunY = 103;
 
     dibujoPea.x = iconX;
     dibujoPea.y = peaY;
@@ -727,8 +716,8 @@ void display_icon(SDL_Renderer* renderer) {
 }
 
 //funcion para mostrar txt
-void texto(SDL_Renderer* sprite, TTF_Font* font, int& soles) {
-    SDL_Color color = { 255, 255, 255 };
+void texto(SDL_Renderer* sprite, TTF_Font* font, int &soles){
+    SDL_Color color = {255, 255, 255};
     string texto = to_string(soles);
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, texto.c_str(), color);
     SDL_Texture* muestra = SDL_CreateTextureFromSurface(sprite, textSurface);
@@ -741,281 +730,318 @@ void texto(SDL_Renderer* sprite, TTF_Font* font, int& soles) {
     SDL_DestroyTexture(muestra);
 }
 
+//funcion para mostrar txt
+void XP(SDL_Renderer* sprite, TTF_Font* font, int &xp){
+    SDL_Color color = {0,0,0};
+    string texto = to_string(xp);
+    SDL_Surface* textSurface = TTF_RenderText_Solid(font, texto.c_str(), color);
+    SDL_Texture* muestra = SDL_CreateTextureFromSurface(sprite, textSurface);
+    SDL_Rect textRect;
+    textRect.x = 1000;
+    textRect.y = 35;
+    SDL_QueryTexture(muestra, nullptr, nullptr, &textRect.w, &textRect.h);
+    SDL_RenderCopy(sprite, muestra, nullptr, &textRect);
+    SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(muestra);
+}
+
+
 
 int main(int argc, char* argv[]) {
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
-    if (TTF_Init() < 0) {
+    if ( TTF_Init() < 0 ) {
         cout << "Error intializing SDL_ttf: " << TTF_GetError() << endl;
         return 2;
     }
     SDL_StartTextInput();
-    vector<vector< Block> > sc = Create_Board();
-    bool run = true;
+    vector<vector< Block> > sc=Create_Board();
+    bool run = true, quit = false;
     Jugador player;
     player.mouse = false;
+    player.xp=0;
     Objetos Object;
     Icon icon{};
     cuadro.h = 44;
     cuadro.w = 44;
-    space.h = 90;
-    space.w = 90;
+    space.h = 60;
+    space.w = 60;
     pos.w = 58;
     pos.h = 60;
     Espacio.w = 58;
     Espacio.h = 60;
     guisante.w = 20;
     guisante.h = 20;
-    cout << Object.zombies.size() << "\n";
+    cout << Object.zombies.size()<< "\n";
 
     SDL_Window* window = SDL_CreateWindow("YIPEEEE", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1200, 600, SDL_WINDOW_SHOWN);
 
-    if (window == NULL) {
-        cout << "No carga ventana";
+    if(window==NULL){
+        cout<<"No carga ventana";
         return 4;
     }
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
     SDL_Surface* temple = IMG_Load(patio);
-    SDL_Surface* sun_icon = IMG_Load(sunny);
-    SDL_Surface* mostrar = IMG_Load(field);
+    SDL_Surface *sun_icon = IMG_Load(sunny);
+    SDL_Surface *mostrar = IMG_Load(field);
+    SDL_Surface *men = IMG_Load(mensaje);
+    SDL_Surface *exp = IMG_Load(total);
 
     //para chequear que pasaba con las imagenes
-    if (temple == NULL && sun_icon == NULL && mostrar == NULL) {
+    if (temple == NULL || sun_icon == NULL || mostrar==NULL || exp==NULL||men==NULL ) {
         cout << "Error loading image: " << SDL_GetBasePath();
         return 5;
     }
     solContador = SDL_CreateTextureFromSurface(renderer, sun_icon);
     Fondo = SDL_CreateTextureFromSurface(renderer, temple);
+    ganado = SDL_CreateTextureFromSurface(renderer, men);
     mostrarSol = SDL_CreateTextureFromSurface(renderer, mostrar);
+    experience = SDL_CreateTextureFromSurface(renderer, exp);
 
     SDL_FreeSurface(temple);
     SDL_FreeSurface(sun_icon);
     SDL_FreeSurface(mostrar);
+    SDL_FreeSurface(exp);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
 
     //=============================================================
     //VALERIA PROBANDO SPRITES
     const int moving = 60;
-    int y = 0, x = 0;
-    int timeZombie = 0, timeWalnut = 0, timePea = 0, timeSunflower = 0;
-    int txtWidth = 0, txtHeight = 0;
+    int y=0, x=0;
+    int timeZombie=0, timeWalnut =0, timePea =0, timeSunflower=0;
+    int txtWidth=0, txtHeight=0;
     SDL_QueryTexture(Texture, NULL, NULL, &txtWidth, &txtHeight);
 
-    zWalk.x = zWalk.y = 0;
+    zWalk.x = zWalk.y =0;
     movePea.x = movePea.y = 0;
     moveWalnut.x = moveWalnut.y = 0;
-    moveWalnut.h = 32;
+    moveSunflower.x = moveSunflower.y =0;
+    moveSunflower.w =29;
+    moveSunflower.h = 33;
+    moveWalnut.h =32;
     moveWalnut.w = 27;
     movePea.h = 31;
     movePea.w = 27;
-    zWalk.h = 49;
-    zWalk.w = 41;
     solPos.x = solPos.y = 5;
     solPos.h = solPos.w = 100;
     txtPos.x = 95;
     txtPos.y = 35;
-    txtPos.w = 60;
+    txtPos.w =60;
     txtPos.h = 40;
-    player.sol_total = 50;
+    xpPos.x = 925;
+    xpPos.y = 35;
+    xpPos.h = 50;
+    xpPos.w = 50;
+    player.sol_total=50;
     //===========================================================
-
+    
     int gus = 0;
-    CrearPeashooters(Object);
-    if (ganar(Object)) {
-        run = true;
-    }
-    else {
-        run = false;
-    }
-
-    while (run) {
-
-        //==========================AQUI LO CAMBIAS ==========================
-        TTF_Font* font = TTF_OpenFont("/Users/valeriaalfaro/Library/Fonts/35021733747.ttf", 33);
-        if (!font) {
-            cout << "Failed to load font: " << TTF_GetError() << endl;
-        }
-        SDL_GetMouseState(&x, &y);
-
-        bool solClick;
-        sumarSoles(Object, sc, x, y, solClick, player);
-        bool mousePressed = false;
-
-        SDL_Event event;
-        SDL_PollEvent(&event);
-
-
-        switch (event.type) {
-        case SDL_QUIT:
+    while(!quit){
+        
+        //crearPeashooters(Object);
+        if(ganar(Object, player.xp)){
+            run = true;
+            SDL_RenderCopy(renderer, ganado, NULL, NULL);
+        }else{
             run = false;
-            IMG_Quit();
-            break;
-        case SDL_MOUSEBUTTONDOWN:
-            if (event.button.button == SDL_BUTTON_LEFT) {
-                x = event.button.x;
-                y = event.button.y;
-                if (!mousePressed && player.mouse == false) {
-                    cout << "click" << "   MOUSE X:" << x;
-                    if (x > 20 && x < 113 && y>102 && y < 292) {
-                        iconSelected(icon, x, y);
-                        mousePressed = true;
-                        player.mouse = true;
-                    }
-                }
-                else if (player.mouse == true) {
-                    if (click_is_in_frontyard(sc, x, y)) {
-                        crearPlantas(Object, icon, player.sol_total, x, y, sc);
-                        player.mouse = false;
-                    }
-                    cout << "RIGHT";
-                }
-            }
-            break;
-        }
-
-        texto(renderer, font, player.sol_total);
-        SDL_RenderPresent(renderer);
-
-
-        SDL_RenderCopy(renderer, Fondo, NULL, NULL);
-        SDL_RenderCopy(renderer, solContador, NULL, &solPos);
-        SDL_RenderCopy(renderer, mostrarSol, NULL, &txtPos);
-        display_icon(renderer);
-
-        //verificacion de como aparecen los icons
-        if (player.sol_total < 50) {
-            //display todo en dim
-            SDL_RenderCopy(renderer, dimP, NULL, &dibujoPea);
-            SDL_RenderCopy(renderer, dimS, NULL, &dibujoSun);
-            SDL_RenderCopy(renderer, dimW, NULL, &dibujoWalnut);
-        }
-        else if (player.sol_total >= 50) {
-            //display solo las plantas sunflower y roca
-            SDL_RenderCopy(renderer, SunIcon, NULL, &dibujoSun);
-            SDL_RenderCopy(renderer, WalIcon, NULL, &dibujoWalnut);
-            if (player.sol_total >= 100) {
-                //mostrar peashooter
-                SDL_RenderCopy(renderer, PeaIcon, NULL, &dibujoPea);
-            }
-            else {
-                //poner el peashooter en dim
-                SDL_RenderCopy(renderer, dimP, NULL, &dibujoPea);
-            }
-        }
-
-
-        //==================================================================
-        //zombies
-        if (gus % 1200 == 0) {
-            RandZombies(Object);
-        }
-
-        handle_zombie_peashooter_encounter(Object, sc);
-        handle_zombie_sunflower_encounter(Object, sc);
-        handle_zombie_walnut_encounter(Object, sc);
-
-        move_zombies(Object.zombies);
-        MostrarZombies(renderer, Object.zombies, Object, sc);
-        //cout << "?" << endl;
-        PrintPeashooters(renderer, Object, sc);
-        PrintWalnuts(renderer, Object, sc);
-        PrintSunflowers(renderer, Object, sc);
-        // mostrarWalnuts(renderer, Object);
-
-
-         //esto crea los sprites
-         //contador para frame del sprite actual
-        timeZombie++;
-        timePea++;
-        timeWalnut++;
-        timeSunflower++;
-
-        if (moving / timeZombie == 4) {
-            //set el contador a 0
-            timeZombie = 0;
-            if (cambio1) {
-                zWalk.x += 41;
-                if (zWalk.x >= 369) {
-                    zWalk.x = 0;
-
-                }
-            }
-            else if (cambio2) {
-                zWalk.x += 25;
-                if (zWalk.x >= 183) {
-                    zWalk.x = 0;
-
-                }
-            }
-            else if (cambio3) {
-                zWalk.x += 31;
-                if (zWalk.x >= 218) {
-                    zWalk.x = 0;
-
-                }
-            }
-
-        }
-
-
-        if (moving / timePea == 6) {
-            timePea = 0;
-            movePea.x += 27;
-            if (movePea.x >= 217) {
-                movePea.x = 0;
-            }
         }
         
-
-
-
-        if (gus % 1200 == 0) {
-            Create_Suns(Object);
-            for (int gus = 0; gus < Object.sunflower.size(); gus++) {
-                gen_random_sun_from_sunflower(Object,Object.sunflower[gus], sc);
+        while (run) {
             
+            //==========================AQUI LO CAMBIAS ==========================
+            TTF_Font* font = TTF_OpenFont("/Users/valeriaalfaro/Library/Fonts/35021733747.ttf", 33);
+            if ( !font ) {
+                cout << "Failed to load font: " << TTF_GetError() << endl;
             }
-        }
-
-        for (int P = 0; P < Object.zombies.size(); P++) {
-            for (int G = 0; G < Object.peashooter.size(); G++) {
-                if (IsZombieInPeashooterRow(Object.peashooter[G], Object.zombies[P]) && gus % 250 == 0) {
-                    crear_Pea(Object.peashooter[G].row, Object.peashooter[G].col, Object, sc);
-
+            SDL_GetMouseState(&x, &y);
+            
+            bool solClick;
+            sumarSoles(Object, sc, x, y, solClick, player);
+            bool mousePressed = false;
+            
+            SDL_Event event;
+            SDL_PollEvent(&event);
+            
+            
+            switch (event.type) {
+                case SDL_QUIT:
+                    quit = false;
+                    IMG_Quit();
+                    break;
+                case SDL_MOUSEBUTTONDOWN:
+                    if (event.button.button == SDL_BUTTON_LEFT) {
+                        x = event.button.x;
+                        y = event.button.y;
+                        if(!mousePressed&& player.mouse==false){
+                            cout<<"click"<<"   MOUSE X:"<<x;
+                            if(x>20 && x<113 && y>102 && y<292){
+                                iconSelected(icon, x, y);
+                                mousePressed = true;
+                                player.mouse = true;
+                            }
+                        }else if(player.mouse==true){
+                            if(click_is_in_frontyard(sc, x, y)){
+                                crearPlantas(Object, icon, player.sol_total, x, y, sc);
+                                player.mouse = false;
+                            }
+                            cout<<"RIGHT";
+                        }
+                    }
+                    break;
+            }
+            
+            texto(renderer, font, player.sol_total);
+            XP(renderer, font, player.xp);
+            SDL_RenderPresent(renderer);
+            
+            
+            SDL_RenderCopy(renderer, Fondo, NULL, NULL);
+            SDL_RenderCopy(renderer, solContador, NULL, &solPos);
+            SDL_RenderCopy(renderer, mostrarSol, NULL, &txtPos);
+            SDL_RenderCopy(renderer, experience , NULL, &xpPos);
+            display_icon(renderer);
+            
+            //verificacion de como aparecen los icons
+            if(player.sol_total < 50){
+                //display todo en dim
+                SDL_RenderCopy(renderer, dimS, NULL, &dibujoSun);
+                SDL_RenderCopy(renderer, dimP, NULL, &dibujoPea);
+                SDL_RenderCopy(renderer, dimW, NULL, &dibujoWalnut);
+            }else if (player.sol_total>=50){
+                //display solo las plantas sunflower y roca
+                SDL_RenderCopy(renderer, SunIcon, NULL, &dibujoSun);
+                SDL_RenderCopy(renderer, WalIcon, NULL, &dibujoWalnut);
+                if(player.sol_total>=100){
+                    //mostrar peashooter
+                    SDL_RenderCopy(renderer, PeaIcon, NULL, &dibujoPea);
+                }else{
+                    //poner el peashooter en dim
+                    SDL_RenderCopy(renderer, dimP, NULL, &dibujoPea);
                 }
             }
-        }
-        MoverPea(Object);
-        mostrarPea(Object, renderer, sc);
-
-        for (int A = 0; A < Object.zombies.size(); A++) {
-            for (int L = 0; L < Object.peas.size(); L++) {
-                if (IsZombieInPeaRow(Object.peas[L], Object.zombies[A])) {
-                    apply_pea_hitting_zombie(Object, L, A);
+            
+            
+            //==================================================================
+            //zombies
+            if (gus % 1200 == 0) {
+                RandZombies(Object);
+            }
+            
+            handle_zombie_peashooter_encounter(Object, sc, player.xp);
+            handle_zombie_walnut_encounter(Object, sc, player.xp);
+            handle_zombie_sunflower_encounter(Object, sc);
+            
+            move_zombies(Object.zombies, player.xp);
+            MostrarZombies(renderer, Object.zombies,Object, sc, player.xp);
+            PrintPeashooters(renderer, Object, sc);
+            PrintWalnuts(renderer, Object, sc);
+            PrintSunflowers(renderer, Object, sc);
+            
+            
+            
+            //esto crea los sprites
+            //contador para frame del sprite actual
+            timeZombie++;
+            timePea++;
+            timeWalnut++;
+            timeSunflower++;
+            
+            
+            if(moving/timeZombie == 4){
+                //set el contador a 0
+                timeZombie =0;
+                if(cambio1){
+                    zWalk.x += 41;
+                    if(zWalk.x >= 369){
+                        zWalk.x = 0;
+                        
+                    }
+                }else if(cambio2){
+                    zWalk.x += 25;
+                    if(zWalk.x >= 183){
+                        zWalk.x = 0;
+                        
+                    }
+                }else if(cambio3){
+                    zWalk.x += 31;
+                    if(zWalk.x >= 218){
+                        zWalk.x = 0;
+                        
+                    }
                 }
-                else if (Object.peas[L].x_location == 1050) {
-                    Object.peas.erase(Object.peas.begin() + L);
+                
+            }
+            
+            if(moving/timePea ==6){
+                timePea =0;
+                movePea.x +=27;
+                if(movePea.x>=217){
+                    movePea.x =0;
                 }
             }
+            
+            if(moving/timeWalnut ==3){
+                timeWalnut =0;
+                moveWalnut.x +=27;
+                if(moveWalnut.x>=136){
+                    moveWalnut.x =0;
+                }
+            }
+            
+            if(moving/timeSunflower ==2){
+                timeSunflower =0;
+                moveSunflower.x +=29;
+                if(moveSunflower.x>=237){
+                    moveSunflower.x =0;
+                }
+            }
+            
+            if (gus % 1200 == 0) {
+                Create_Suns(Object);
+                for (int gus = 0; gus < Object.sunflower.size(); gus++) {
+                    gen_random_sun_from_sunflower(Object,Object.sunflower[gus], sc);
+                }
+            }
+            
+            for (int P = 0; P < Object.zombies.size(); P++) {
+                for (int G = 0; G < Object.peashooter.size(); G++) {
+                    if (IsZombieInPeashooterRow(Object.peashooter[G], Object.zombies[P]) && gus % 250 == 0) {
+                        crear_Pea(Object.peashooter[G].row, Object.peashooter[G].col, Object,sc);
+                    }
+                }
+            }
+            MoverPea(Object);
+            mostrarPea(Object, renderer,sc);
+            
+            for (int A = 0; A < Object.zombies.size(); A++) {
+                for (int L = 0; L < Object.peas.size(); L++) {
+                    if (IsZombieInPeaRow(Object.peas[L], Object.zombies[A])) {
+                        apply_pea_hitting_zombie(Object, L, A, player.xp);
+                    }
+                    else if (Object.peas[L].x_location == 1050) {
+                        Object.peas.erase(Object.peas.begin() + L);
+                    }
+                }
+            }
+            
+            
+            //soles
+            MoverSoles(Object.suns,sc);
+            MostrarSoles(renderer, Object.suns,sc);
+            
+            
+            gus += 10;
+            SDL_Delay(30);
+            
+            
         }
-
-
-        //soles
-        MoverSoles(Object.suns, sc);
-        MostrarSoles(renderer, Object.suns, sc);
-
-
-        gus += 10;
-        SDL_Delay(30);
-
-
+        cout <<"Zombie Pos x: "<< gus << "\n Zombie Pos Y: " << space.y;
+        
+        cout << "\n\n"<< Object.zombies.size() << "\n";
+        cout << Object.suns.size();
+        
     }
-    cout << "Zombie Pos x: " << gus << "\n Zombie Pos Y: " << space.y;
-
-    cout << "\n\n" << Object.zombies.size() << "\n";
-    cout << Object.suns.size();
-
     SDL_DestroyWindow(window);
     SDL_RenderClear(renderer);
     IMG_Quit();
@@ -1023,3 +1049,4 @@ int main(int argc, char* argv[]) {
     TTF_Quit();
     return 0;
 }
+
