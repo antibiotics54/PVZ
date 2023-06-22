@@ -13,12 +13,13 @@ using namespace std;
 SDL_Texture* Texture, * Fondo, *inicio, *solContador, *dimP, *dimS, *dimW, *PeaIcon, *WalIcon, *SunIcon, *Txt, *mostrarSol;
 SDL_Rect space, Image,cuadro, zWalk, guisante, Espacio, movePea, dibujoPea, dibujoSun, dibujoWalnut, danger, moveWalnut, moveSunflower, pos, solPos, txtPos;
 int walkWidth, txtWidth;
+bool cambio1=false, cambio2=false, cambio3 =false;
 
 #define zombie "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/ZombieWalkingSprites.png"
 #define pelota "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/pea.png"
 #define sunny "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/sun.png"
 #define patio "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/Patio.png"
-#define flor "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/sunflower.png"
+#define flor "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/sunFlower.png"
 #define pea "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/peashooters_copy.png"
 #define iconP "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/icon_peashooter_100.png"
 #define dimIconP "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/icon_peashooter_100_dim.png"
@@ -27,10 +28,10 @@ int walkWidth, txtWidth;
 #define iconW "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/icon_walnut.png"
 #define dimIconW "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/icon_walnut_dim.png"
 #define pegar "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/impacto.png"
-#define walNut "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/roca_copy.png"
+#define walNut "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/roca1.png"
 #define login "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/fondo_login.png"
-#define danger1 "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/danger1.png"
-#define comiendo "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/comiendo.png"
+#define danger1 "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/danger2.png"
+#define comiendo "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/comiendo1.png"
 #define field "/Users/valeriaalfaro/Library/Developer/Xcode/DerivedData/PlantsZombies-fiokuwxnbevesecggirpjmijaqec/Build/Products/assets/png/text_field.png"
 
 //defini aqui arriba mis dirrectorios porque en mac es distinto
@@ -195,6 +196,7 @@ bool ZombiePuedeMoverse(Zombie zomb, int row, int col, vector<vector<Block> >& m
 
 //verificar si el zombie choco con la planta
 bool ZombieChocadoConPlantas(Objetos& elements, Zombie& zomb, vector<vector<Block> >& map) {
+    
     for (int i = 0; i < elements.walnut.size(); i++) {
         if (ZombiePuedeMoverse(zomb, elements.walnut[i].row, elements.walnut[i].col, map)) {
             zomb.moving = false;
@@ -344,11 +346,11 @@ void PrintPeashooters(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> > sc
         cout << "Error loading image: " << SDL_GetBasePath();
         return;
     }
-    cout << "size: " << obj.peashooter.size() << "\n";
+    //cout << "size: " << obj.peashooter.size() << "\n";
     int col, row;
     for (int gustavo = 0; gustavo < obj.peashooter.size(); gustavo++) {
-        cout << "Peashooter No. " << gustavo<< endl;
-        cout << "Row: " << obj.peashooter[gustavo].row << ", Col: " << obj.peashooter[gustavo].col << endl;
+     //   cout << "Peashooter No. " << gustavo<< endl;
+     //   cout << "Row: " << obj.peashooter[gustavo].row << ", Col: " << obj.peashooter[gustavo].col << endl;
         col = obj.peashooter[gustavo].col;
         row = obj.peashooter[gustavo].row;
         Espacio.x = sc[row][col].x1 +50;
@@ -357,6 +359,58 @@ void PrintPeashooters(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> > sc
         //cout << "coords peashooter:" << Espacio.x << " , " << Espacio.y << "\n";
         //std::cout << gustavo << ". Aqui?\n";
         SDL_RenderCopy(ren, Texture, &movePea, &Espacio);
+        
+    }
+}
+
+
+//funcion para imprimir los peashooters
+void PrintSunflowers(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> > sc) {
+    SDL_Surface* temp = IMG_Load(flor);
+    Texture = SDL_CreateTextureFromSurface(ren, temp);
+    if (temp == NULL) {
+        cout << "Error loading image: " << SDL_GetBasePath();
+        return;
+    }
+    //cout << "size: " << obj.peashooter.size() << "\n";
+    int col, row;
+    for (int gustavo = 0; gustavo < obj.sunflower.size(); gustavo++) {
+     //   cout << "Peashooter No. " << gustavo<< endl;
+     //   cout << "Row: " << obj.peashooter[gustavo].row << ", Col: " << obj.peashooter[gustavo].col << endl;
+        col = obj.sunflower[gustavo].col;
+        row = obj.sunflower[gustavo].row;
+        Espacio.x = sc[row][col].x1 +50;
+        Espacio.y = sc[row][col].y1 +20;
+    
+        //cout << "coords peashooter:" << Espacio.x << " , " << Espacio.y << "\n";
+        //std::cout << gustavo << ". Aqui?\n";
+        SDL_RenderCopy(ren, Texture, &moveSunflower, &Espacio);
+        
+    }
+}
+
+
+//funcion para imprimir los walnuts
+void PrintWalnuts(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> > sc) {
+    SDL_Surface* temp = IMG_Load(walNut);
+    Texture = SDL_CreateTextureFromSurface(ren, temp);
+    if (temp == NULL) {
+        cout << "Error loading image: " << SDL_GetBasePath();
+        return;
+    }
+    //cout << "size: " << obj.peashooter.size() << "\n";
+    int col, row;
+    for (int gustavo = 0; gustavo < obj.walnut.size(); gustavo++) {
+     //   cout << "Peashooter No. " << gustavo<< endl;
+     //   cout << "Row: " << obj.peashooter[gustavo].row << ", Col: " << obj.peashooter[gustavo].col << endl;
+        col = obj.walnut[gustavo].col;
+        row = obj.walnut[gustavo].row;
+        Espacio.x = sc[row][col].x1 +50;
+        Espacio.y = sc[row][col].y1 +20;
+    
+        //cout << "coords peashooter:" << Espacio.x << " , " << Espacio.y << "\n";
+        //std::cout << gustavo << ". Aqui?\n";
+        SDL_RenderCopy(ren, Texture, &moveWalnut, &Espacio);
         
     }
 }
@@ -378,29 +432,39 @@ void mostrarWalnuts(SDL_Renderer* ren, Objetos& obj) {
 
 //funcion para imprimir los zombies
 //funcion para imprimir los zombies
-void MostrarZombies(SDL_Renderer* ren, vector<Zombie>& zombies, vector<vector< Block> > sc) {
+void MostrarZombies(SDL_Renderer* ren, vector<Zombie>& zombies, Objetos& obj, vector<vector< Block> >& sc) {
+    Zombie z;
 
     for (int i = 0; i < zombies.size(); i++) {
-
+        int row = zombies[i].row;
+        int col = zombies[i].y_location;
         //cambiar sprites dependiendo de la health
-        if (zombies[i].health > 0) {
-            //                zombies[i].directory = zombie;
+        if (zombies[i].health==10) {
             SDL_Surface* temp = IMG_Load(zombie);
             Texture = SDL_CreateTextureFromSurface(ren, temp);
-        }
-        /*
-        * else if (zombies[i].health < 4) {
-            // zombies[i].directory = danger1;
-            SDL_Surface* temp = IMG_Load(danger1);
+            zWalk.h = 49;
+            zWalk.w = 41;
+            cambio1=true;
+            cambio2=false;
+            cambio3=false;
+        }else if(zombies[i].health<5){
+            SDL_Surface* temp = IMG_Load(zombie);
             Texture = SDL_CreateTextureFromSurface(ren, temp);
-        }
-        else if (ZombieChocadoConPlantas(obj, zomb, sc)) {
-            // zombies[i].directory = comiendo;
+            zWalk.w=25;
+            zWalk.h = 46;
+            cambio1=false;
+            cambio2=true;
+            cambio3=false;
+        }else if(!ZombieChocadoConPlantas(obj, z, sc)){
             SDL_Surface* temp = IMG_Load(comiendo);
+            zWalk.w=29;
+            zWalk.h = 45;
+            cambio1=false;
+            cambio2=false;
+            cambio3=true;
             Texture = SDL_CreateTextureFromSurface(ren, temp);
         }
-        */
-        int row = zombies[i].row;
+      
         space.x = zombies[i].x_location;
         space.y = sc[row][8].y1-10;
         if (space.x > 256 && zombies[i].health > 0) {
@@ -660,8 +724,6 @@ int main(int argc, char* argv[]) {
     moveWalnut.w = 27;
     movePea.h = 31;
     movePea.w = 27;
-    zWalk.h = 49;
-    zWalk.w = 41;
     solPos.x = solPos.y = 5;
     solPos.h = solPos.w = 100;
     txtPos.x = 95;
@@ -759,9 +821,10 @@ int main(int argc, char* argv[]) {
         }
 
         move_zombies(Object.zombies);
-        MostrarZombies(renderer, Object.zombies,sc);
+        MostrarZombies(renderer, Object.zombies,Object, sc);
         PrintPeashooters(renderer, Object, sc);
-
+        PrintWalnuts(renderer, Object, sc);
+        PrintSunflowers(renderer, Object, sc);
        // mostrarWalnuts(renderer, Object);
 
 
@@ -772,14 +835,30 @@ int main(int argc, char* argv[]) {
         timeWalnut++;
         timeSunflower++;
 
+        
         if(moving/timeZombie == 4){
             //set el contador a 0
             timeZombie =0;
-            zWalk.x += 41;
-            if(zWalk.x >= 369){
-                zWalk.x = 0;
+            if(cambio1){
+                zWalk.x += 41;
+                if(zWalk.x >= 369){
+                    zWalk.x = 0;
 
+                }
+            }else if(cambio2){
+                zWalk.x += 25;
+                if(zWalk.x >= 183){
+                    zWalk.x = 0;
+
+                }
+            }else if(cambio3){
+                zWalk.x += 31;
+                if(zWalk.x >= 218){
+                    zWalk.x = 0;
+
+                }
             }
+            
         }
 
         if(moving/timePea ==6){
@@ -790,21 +869,21 @@ int main(int argc, char* argv[]) {
             }
         }
 //
-//        if(moving/timeWalnut ==3){
-//            timeWalnut =0;
-//            moveWalnut.x +=27;
-//            if(moveWalnut.x>=136){
-//                moveWalnut.x =0;
-//            }
-//        }
-//
-//        if(moving/timeSunflower ==3){
-//            timeSunflower =0;
-//            moveSunflower.x +=29;
-//            if(moveSunflower.x>=237){
-//                moveSunflower.x =0;
-//            }
-//        }
+        if(moving/timeWalnut ==3){
+            timeWalnut =0;
+            moveWalnut.x +=27;
+            if(moveWalnut.x>=136){
+                moveWalnut.x =0;
+            }
+        }
+
+        if(moving/timeSunflower ==3){
+            timeSunflower =0;
+            moveSunflower.x +=29;
+            if(moveSunflower.x>=237){
+                moveSunflower.x =0;
+            }
+        }
 
 
 
