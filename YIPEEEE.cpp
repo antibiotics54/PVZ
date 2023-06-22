@@ -330,27 +330,27 @@ void CrearPeashooters(Objetos& obj) {
     Peashooter temp;
     temp.col = 7;
     temp.row = 0;
-    temp.vida = 60;
+    temp.vida = 30;
     obj.peashooter.push_back(temp);
     Peashooter temp2;
     temp2.col = 7;
     temp2.row = 1;
-    temp2.vida = 60;
+    temp2.vida = 30;
     obj.peashooter.push_back(temp2);
     Peashooter temp3;
     temp3.col = 7;
     temp3.row = 2;
-    temp3.vida = 60;
+    temp3.vida = 30;
     obj.peashooter.push_back(temp3);
     Peashooter temp4;
     temp4.col = 7;
     temp4.row = 3;
-    temp4.vida = 60;
+    temp4.vida = 30;
     obj.peashooter.push_back(temp4);
     Peashooter temp5;
     temp5.col = 7;
     temp5.row = 4;
-    temp5.vida = 60;
+    temp5.vida = 30;
     obj.peashooter.push_back(temp5);
 }
 
@@ -362,11 +362,12 @@ void PrintPeashooters(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> > sc
         cout << "Error loading image: " << SDL_GetBasePath();
         return;
     }
-    cout << "size: " << obj.peashooter.size() << "\n";
+    //cout << "size: " << obj.peashooter.size() << "\n";
     int col, row;
     for (int gustavo = 0; gustavo < obj.peashooter.size(); gustavo++) {
-        cout << "Peashooter No. " << gustavo<< endl;
-        cout << "Row: " << obj.peashooter[gustavo].row << ", Col: " << obj.peashooter[gustavo].col << endl;
+        //cout << "Peashooter No. " << gustavo<< endl;
+        //cout << "Row: " << obj.peashooter[gustavo].row << ", Col: " << obj.peashooter[gustavo].col << endl;
+        cout << "Vida Peashooter No." << gustavo <<" : " << obj.peashooter[gustavo].vida << endl;
         col = obj.peashooter[gustavo].col;
         row = obj.peashooter[gustavo].row;
         Espacio.x = sc[row][col].x1+30;
@@ -381,8 +382,10 @@ void PrintPeashooters(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> > sc
 
 void apply_zombie_byte_on_peashooter(Objetos& obj, int z_ind, int p_ind, vector<vector<Block> > sc) {
     if (has_zombie_reached_element(obj.zombies[z_ind], obj.peashooter[p_ind].row, obj.peashooter[p_ind].col, sc)) {
+        obj.zombies[z_ind].moving = false;
         obj.peashooter[p_ind].vida--;
-        if (obj.peashooter[p_ind].vida < 0 ) {
+        if (obj.peashooter[p_ind].vida == 0 ) {
+            //cout << "?" << endl;
             obj.zombies[z_ind].moving = true;
             obj.peashooter.erase(obj.peashooter.begin() + p_ind);
         }
@@ -506,6 +509,7 @@ void PrintSunflowers(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> > sc)
 void apply_zombie_byte_on_sunflower(Objetos& obj, int z_ind, int s_ind, vector<vector<Block> > sc) {
     if (has_zombie_reached_element(obj.zombies[z_ind], obj.sunflower[s_ind].row, obj.sunflower[s_ind].col, sc)) {
         obj.sunflower[s_ind].vida--;
+        obj.zombies[z_ind].moving = false;
         if (obj.sunflower[s_ind].byte < 0) {
             obj.zombies[z_ind].moving = true;
             obj.sunflower.erase(obj.sunflower.begin() + s_ind);
@@ -548,8 +552,9 @@ void PrintWalnuts(SDL_Renderer* ren, Objetos& obj, vector<vector<Block> > sc) {
 
 void apply_zombie_byte_on_walnut(Objetos& obj, int z_ind, int w_ind, vector<vector<Block> > sc) {
     if (has_zombie_reached_element(obj.zombies[z_ind], obj.walnut[w_ind].row, obj.walnut[w_ind].col, sc)) {
-        obj.walnut[w_ind].byte++;
-        if (obj.walnut[w_ind].byte < 0) {
+        obj.zombies[z_ind].moving = false;
+        obj.walnut[w_ind].vida--;
+        if (obj.walnut[w_ind].vida < 0) {
             obj.zombies[z_ind].moving = true;
             obj.walnut.erase(obj.walnut.begin() + w_ind);
         }
@@ -906,15 +911,16 @@ int main(int argc, char* argv[]) {
             RandZombies(Object);
         }
 
-        move_zombies(Object.zombies);
-        MostrarZombies(renderer, Object.zombies, Object, sc);
-        PrintPeashooters(renderer, Object, sc);
-        PrintWalnuts(renderer, Object, sc);
-        PrintSunflowers(renderer, Object, sc);
-
         handle_zombie_peashooter_encounter(Object, sc);
         handle_zombie_sunflower_encounter(Object, sc);
         handle_zombie_walnut_encounter(Object, sc);
+
+        move_zombies(Object.zombies);
+        MostrarZombies(renderer, Object.zombies, Object, sc);
+        //cout << "?" << endl;
+        PrintPeashooters(renderer, Object, sc);
+        PrintWalnuts(renderer, Object, sc);
+        PrintSunflowers(renderer, Object, sc);
         // mostrarWalnuts(renderer, Object);
 
 
